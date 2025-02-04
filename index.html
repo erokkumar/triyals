@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Attendance</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 p-6">
+    <div class="bg-white p-8 shadow-lg rounded-2xl w-96 text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Employee Attendance</h1>
+        
+        <div class="mb-4">
+            <label class="block mb-2 text-gray-700 text-lg font-semibold">Select Employee</label>
+            <select id="employeeName" class="border-2 border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">-- Select an Employee --</option>
+                <option value="Rohit Shaw">Rohit Shaw</option>
+                <option value="Rohit Kumar">Rohit Kumar</option>
+                <option value="Amit Rawat">Amit Rawat</option>
+                <option value="Akash Maurya">Akash Maurya</option>
+                <option value="Deepak Chaudhary">Deepak Chaudhary</option>
+                <option value="Jyoti Sharma">Jyoti Sharma</option>
+                <option value="Mukesh Sharma">Mukesh Sharma</option>
+                <option value="Neha Yadav">Neha Yadav</option>
+                <option value="Rahul Sharma">Rahul Sharma</option>
+                <option value="Sanjana Rawat">Sanjana Rawat</option>
+                <option value="Tanya Sharma">Tanya Sharma</option>
+                <option value="Shivam Chaudhary">Shivam Chaudhary</option>
+            </select>
+        </div>
+
+        <div class="flex space-x-4 mt-4">
+            <button onclick="handleLogin()" class="bg-green-500 text-white px-5 py-2 rounded-lg w-full font-semibold hover:bg-green-600 transition duration-300">Login</button>
+            <button onclick="handleLogout()" class="bg-red-500 text-white px-5 py-2 rounded-lg w-full font-semibold hover:bg-red-600 transition duration-300">Logout</button>
+        </div>
+
+        <p id="message" class="mt-4 text-lg font-medium text-blue-700 bg-blue-100 p-3 rounded-lg shadow-md hidden"></p>
+    </div>
+
+    <script>
+        async function handleLogin() {
+            const employeeName = document.getElementById("employeeName").value;
+            if (!employeeName) {
+                showMessage("Please select an employee.");
+                return;
+            }
+            try {
+                const response = await fetch("http://localhost:5000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ employeeName })
+                });
+                const data = await response.json();
+                showMessage(data.message);
+            } catch (error) {
+                showMessage("An error occurred. Please try again.");
+            }
+        }
+
+        async function handleLogout() {
+            const employeeName = document.getElementById("employeeName").value;
+            if (!employeeName) {
+                showMessage("Please select an employee.");
+                return;
+            }
+            try {
+                const response = await fetch("http://localhost:5000/logout", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ employeeName })
+                });
+                const data = await response.json();
+                showMessage(data.message);
+            } catch (error) {
+                showMessage("An error occurred. Please try again.");
+            }
+        }
+
+        function showMessage(msg) {
+            const messageEl = document.getElementById("message");
+            messageEl.textContent = msg;
+            messageEl.classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>
