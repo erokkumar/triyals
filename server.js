@@ -26,11 +26,16 @@ connectDB();
  */
 function getISTDateWithoutSeconds() {
   const now = new Date();
-  
-  now.setSeconds(0);
-  now.setMilliseconds(0);
 
-  return now;
+  // Convert to IST (UTC+5:30)
+  const ISTOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes in milliseconds
+  const ISTTime = new Date(now.getTime() + ISTOffset);
+
+  // Remove seconds and milliseconds
+  ISTTime.setSeconds(0);
+  ISTTime.setMilliseconds(0);
+
+  return ISTTime;
 }
 
 // Define the schema for attendance
