@@ -24,27 +24,29 @@ connectDB();
 /**
  * Function to get current IST time (UTC+5:30) without seconds & milliseconds
  */
-function getISTDateWithoutSeconds() {
+function getISTTimeString() {
   const now = new Date();
 
   // Convert to IST (UTC+5:30)
   const ISTOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes in milliseconds
   const ISTTime = new Date(now.getTime() + ISTOffset);
 
-  // Remove seconds and milliseconds
-  ISTTime.setSeconds(0);
-  ISTTime.setMilliseconds(0);
+  // Format time as HH:mm:ss
+  const hours = String(ISTTime.getUTCHours()).padStart(2, "0");
+  const minutes = String(ISTTime.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(ISTTime.getUTCSeconds()).padStart(2, "0");
 
-  return ISTTime;
+  return `${hours}:${minutes}:${seconds}`;
 }
 
 // Define the schema for attendance
 const attendanceSchema = new mongoose.Schema({
   employeeName: { type: String, required: true },
-  loginTime: { type: Date, default: Date.now },
-  logoutTime: { type: Date },
-  date: { type: String, required: true }
+  loginTime: { type: String },  // Store only HH:mm:ss
+  logoutTime: { type: String },
+  date: { type: String, required: true }  // YYYY-MM-DD
 });
+
 
 const Attendance = mongoose.model("Attendance", attendanceSchema);
 
@@ -62,7 +64,7 @@ app.post("/login", async (req, res) => {
     }
 
     // Store login time in UTC
-    const loginTime = getISTDateWithoutSeconds();
+    const loginTime = getISTTimeString();
     const newAttendance = new Attendance({ employeeName, date, loginTime });
 
     await newAttendance.save();
@@ -91,7 +93,7 @@ app.post("/logout", async (req, res) => {
     }
 
     // Store logout time in UTC
-    record.logoutTime = getISTDateWithoutSeconds();
+    record.logoutTime = getISTTimeString();
     await record.save();
 
     res.status(200).json({ message: "Logout successful." });
